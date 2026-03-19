@@ -3,39 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARC Dice Game V2</title>
+  <title>ARC Dice Game V2.5</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
+      font-family: Inter, Arial, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.18), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(34,197,94,0.14), transparent 30%),
+        linear-gradient(135deg, #0b1020, #111827 45%, #0f172a);
       color: white;
       min-height: 100vh;
       padding: 20px;
+      overflow-x: hidden;
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
     }
 
-    .top-title {
+    .hero {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
-    .top-title h1 {
-      font-size: 34px;
+    .hero h1 {
+      font-size: 38px;
       color: #facc15;
       margin-bottom: 8px;
+      text-shadow: 0 0 18px rgba(250, 204, 21, 0.25);
     }
 
-    .top-title p {
+    .hero p {
       color: #cbd5e1;
       font-size: 15px;
     }
@@ -46,62 +51,80 @@
       gap: 20px;
     }
 
-    @media (min-width: 900px) {
+    @media (min-width: 940px) {
       .layout {
         grid-template-columns: 1.2fr 0.8fr;
       }
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(10px);
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 35%);
+      pointer-events: none;
     }
 
     .card h2 {
-      font-size: 22px;
-      margin-bottom: 12px;
+      font-size: 23px;
+      margin-bottom: 14px;
       color: #f8fafc;
     }
 
     .status-banner {
       padding: 14px;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 14px;
       text-align: center;
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: rgba(239, 68, 68, 0.14);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.28);
     }
 
     .status-banner.connected {
-      background: rgba(34, 197, 94, 0.15);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.35);
+      background: rgba(34, 197, 94, 0.14);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.28);
     }
 
     .status-banner.locked {
-      background: rgba(250, 204, 21, 0.15);
-      color: #fde047;
-      border: 1px solid rgba(250, 204, 21, 0.35);
+      background: rgba(250, 204, 21, 0.14);
+      color: #fde68a;
+      border: 1px solid rgba(250, 204, 21, 0.28);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     button {
       width: 100%;
       border: none;
       outline: none;
-      padding: 14px 18px;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: bold;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
-      margin: 8px 0;
-      transition: 0.2s ease;
+      transition: 0.18s ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
     }
 
     button:hover {
@@ -115,26 +138,33 @@
     }
 
     .connect-btn {
-      background: #22c55e;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+    }
+
+    .sound-btn {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
       color: white;
     }
 
     .roll-btn {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
+      margin-top: 10px;
     }
 
     .reset-btn {
-      background: #ef4444;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
       margin-top: 14px;
     }
 
     .box {
-      margin-top: 14px;
+      margin-top: 12px;
       padding: 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
       word-break: break-word;
     }
 
@@ -143,43 +173,73 @@
       font-size: 14px;
     }
 
+    .dice-stage {
+      margin: 22px 0 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 150px;
+      position: relative;
+    }
+
     .dice {
-      font-size: 110px;
-      margin: 24px 0;
-      text-align: center;
+      font-size: 120px;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.25));
+      transition: transform 0.15s ease;
+      user-select: none;
     }
 
     .rolling {
-      animation: shake 0.14s infinite;
+      animation: shake 0.12s infinite;
     }
 
     @keyframes shake {
-      0% { transform: rotate(0deg) scale(1); }
-      25% { transform: rotate(10deg) scale(1.08); }
-      50% { transform: rotate(0deg) scale(1.12); }
-      75% { transform: rotate(-10deg) scale(1.08); }
+      0%   { transform: rotate(0deg) scale(1); }
+      20%  { transform: rotate(8deg) scale(1.05); }
+      40%  { transform: rotate(-8deg) scale(1.1); }
+      60%  { transform: rotate(8deg) scale(1.12); }
+      80%  { transform: rotate(-8deg) scale(1.08); }
       100% { transform: rotate(0deg) scale(1); }
+    }
+
+    .glow-ring {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.2), transparent 65%);
+      filter: blur(8px);
+      pointer-events: none;
     }
 
     .result-box {
       font-size: 24px;
-      font-weight: bold;
+      font-weight: 900;
       color: #facc15;
       text-align: center;
     }
 
     .message-box {
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 17px;
+      font-weight: 800;
       text-align: center;
     }
 
     .win {
-      color: #22c55e;
+      color: #4ade80;
     }
 
     .lose {
-      color: #ef4444;
+      color: #f87171;
+    }
+
+    .countdown {
+      text-align: center;
+      margin-top: 10px;
+      color: #93c5fd;
+      font-size: 14px;
+      font-weight: 700;
+      min-height: 20px;
     }
 
     .info-grid {
@@ -191,25 +251,28 @@
 
     .stat-box {
       background: rgba(255,255,255,0.06);
-      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
       padding: 14px;
       text-align: center;
     }
 
     .stat-label {
       color: #94a3b8;
-      font-size: 13px;
+      font-size: 12px;
       margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .stat-value {
       font-size: 22px;
-      font-weight: bold;
+      font-weight: 900;
       color: #f8fafc;
     }
 
     .leaderboard-list {
-      margin-top: 14px;
+      margin-top: 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -217,38 +280,40 @@
 
     .leader-item {
       background: rgba(255,255,255,0.06);
-      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
       padding: 12px;
       display: flex;
       justify-content: space-between;
       gap: 10px;
       align-items: center;
-      font-size: 14px;
       flex-wrap: wrap;
+      transition: 0.18s ease;
+    }
+
+    .leader-item:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.08);
     }
 
     .leader-rank {
-      font-weight: bold;
+      font-weight: 900;
       color: #facc15;
-      min-width: 40px;
+      min-width: 44px;
+      font-size: 15px;
     }
 
     .leader-wallet {
       color: #cbd5e1;
       flex: 1;
       word-break: break-word;
+      font-size: 14px;
     }
 
     .leader-score {
-      color: #4ade80;
-      font-weight: bold;
-    }
-
-    .small-note {
-      margin-top: 14px;
-      color: #94a3b8;
-      font-size: 12px;
-      text-align: center;
+      color: #86efac;
+      font-weight: 800;
+      font-size: 13px;
     }
 
     .empty-text {
@@ -257,34 +322,70 @@
       text-align: center;
       padding: 12px 0;
     }
+
+    .small-note {
+      margin-top: 14px;
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 16px;
+      top: -20px;
+      border-radius: 3px;
+      opacity: 0.9;
+      z-index: 9999;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="top-title">
-      <h1>🎲 ARC Dice Game V2</h1>
-      <p>Connect wallet • 1 roll per day • Roll a 6 to win • Leaderboard enabled</p>
+    <div class="hero">
+      <h1>🎲 ARC Dice Game V2.5</h1>
+      <p>Connect wallet • 1 roll per day • Roll a 6 to win • Countdown • Confetti • Leaderboard</p>
     </div>
 
     <div class="layout">
-      <!-- LEFT: GAME -->
+      <!-- LEFT -->
       <div class="card">
-        <h2>Play Game</h2>
+        <h2>Play Dice</h2>
 
         <div class="status-banner" id="statusBanner">
           🚨 CONNECT WALLET FIRST TO PLAY
         </div>
 
-        <button class="connect-btn" id="connectBtn" onclick="connectWallet()">🔗 Connect Wallet</button>
+        <div class="toolbar">
+          <button class="connect-btn" id="connectBtn" onclick="connectWallet()">🔗 Connect Wallet</button>
+          <button class="sound-btn" id="soundBtn" onclick="toggleSound()">🔊 Sound: ON</button>
+        </div>
 
         <div class="box wallet-box" id="walletBox">Wallet not connected</div>
 
-        <div class="dice" id="diceDisplay">🎲</div>
+        <div class="dice-stage">
+          <div class="glow-ring"></div>
+          <div class="dice" id="diceDisplay">🎲</div>
+        </div>
 
         <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Dice</button>
 
         <div class="box result-box" id="resultBox">Result: -</div>
         <div class="box message-box" id="messageBox">Waiting for wallet connection...</div>
+        <div class="countdown" id="countdownBox"></div>
 
         <div class="info-grid">
           <div class="stat-box">
@@ -308,11 +409,11 @@
         <button class="reset-btn" onclick="resetAllData()">🗑 Reset All Local Game Data</button>
 
         <div class="small-note">
-          Demo real-feel version: wallet connection is simulated, but game logic + daily lock + leaderboard are real in your browser.
+          Demo real-feel version: wallet is simulated, but game logic, daily lock, leaderboard and countdown are real in your browser.
         </div>
       </div>
 
-      <!-- RIGHT: LEADERBOARD -->
+      <!-- RIGHT -->
       <div class="card">
         <h2>🏆 Leaderboard (Top Wallets)</h2>
         <div class="leaderboard-list" id="leaderboardList">
@@ -326,6 +427,8 @@
     let walletConnected = false;
     let currentWallet = null;
     let isRolling = false;
+    let soundEnabled = true;
+    let countdownInterval = null;
 
     const diceFaces = {
       1: "⚀",
@@ -336,8 +439,9 @@
       6: "⚅"
     };
 
-    const STORAGE_KEY = "arcDiceGamePlayersV2";
-    const CURRENT_WALLET_KEY = "arcDiceGameCurrentWalletV2";
+    const STORAGE_KEY = "arcDiceGamePlayersV25";
+    const CURRENT_WALLET_KEY = "arcDiceGameCurrentWalletV25";
+    const SOUND_KEY = "arcDiceGameSoundV25";
 
     function getTodayString() {
       const today = new Date();
@@ -361,6 +465,16 @@
 
     function saveCurrentWallet(wallet) {
       localStorage.setItem(CURRENT_WALLET_KEY, wallet);
+    }
+
+    function loadSound() {
+      const raw = localStorage.getItem(SOUND_KEY);
+      if (raw === null) return true;
+      return raw === "true";
+    }
+
+    function saveSound(value) {
+      localStorage.setItem(SOUND_KEY, value);
     }
 
     function generateFakeWallet() {
@@ -408,6 +522,51 @@
       const player = players[wallet];
       if (!player) return true;
       return player.lastPlayedDate !== getTodayString();
+    }
+
+    function getTimeUntilTomorrow() {
+      const now = new Date();
+      const tomorrow = new Date();
+      tomorrow.setHours(24, 0, 0, 0);
+
+      const diff = tomorrow - now;
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      return {
+        hours,
+        minutes,
+        seconds
+      };
+    }
+
+    function startCountdown() {
+      clearInterval(countdownInterval);
+
+      const countdownBox = document.getElementById("countdownBox");
+
+      if (!currentWallet || canWalletPlayToday(currentWallet)) {
+        countdownBox.textContent = "";
+        return;
+      }
+
+      function updateCountdown() {
+        if (!currentWallet || canWalletPlayToday(currentWallet)) {
+          countdownBox.textContent = "";
+          clearInterval(countdownInterval);
+          updateStatusAfterConnection();
+          updateUserStats();
+          return;
+        }
+
+        const t = getTimeUntilTomorrow();
+        countdownBox.textContent = `⏳ Next roll in ${String(t.hours).padStart(2, "0")}:${String(t.minutes).padStart(2, "0")}:${String(t.seconds).padStart(2, "0")}`;
+      }
+
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
     }
 
     function updateLeaderboard() {
@@ -463,23 +622,24 @@
       if (canWalletPlayToday(currentWallet)) {
         statusBanner.textContent = "✅ WALLET CONNECTED — YOU CAN PLAY TODAY";
         statusBanner.className = "status-banner connected";
-        messageBox.textContent = "🎲 You have 1 roll available today. Good luck!";
+        messageBox.textContent = "🎲 You have 1 roll available today. Roll and try for a 6!";
         messageBox.className = "box message-box";
         rollBtn.disabled = false;
       } else {
         statusBanner.textContent = "⏳ YOU ALREADY PLAYED TODAY — COME BACK TOMORROW";
         statusBanner.className = "status-banner locked";
-        messageBox.textContent = "🚫 Daily limit reached for this wallet. Try again tomorrow.";
+        messageBox.textContent = "🚫 Daily limit reached for this wallet.";
         messageBox.className = "box message-box lose";
         rollBtn.disabled = true;
       }
+
+      startCountdown();
     }
 
     function connectWallet() {
       const walletBox = document.getElementById("walletBox");
       const connectBtn = document.getElementById("connectBtn");
 
-      // Reuse same wallet if already saved, so stats stay tied to one wallet
       let savedWallet = getCurrentSavedWallet();
       if (!savedWallet) {
         savedWallet = generateFakeWallet();
@@ -498,6 +658,93 @@
       updateUserStats();
       updateLeaderboard();
       updateStatusAfterConnection();
+    }
+
+    function playBeep(frequency = 440, duration = 120, type = "sine", volume = 0.03) {
+      if (!soundEnabled) return;
+
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+        gainNode.gain.value = volume;
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+
+        setTimeout(() => {
+          oscillator.stop();
+          audioCtx.close();
+        }, duration);
+      } catch (e) {
+        console.log("Sound blocked by browser until user interaction.");
+      }
+    }
+
+    function playRollSound() {
+      if (!soundEnabled) return;
+
+      let notes = [300, 360, 420, 480, 540];
+      notes.forEach((note, i) => {
+        setTimeout(() => playBeep(note, 70, "square", 0.025), i * 80);
+      });
+    }
+
+    function playWinSound() {
+      if (!soundEnabled) return;
+
+      const notes = [523, 659, 784, 1046];
+      notes.forEach((note, i) => {
+        setTimeout(() => playBeep(note, 140, "triangle", 0.04), i * 120);
+      });
+    }
+
+    function playLoseSound() {
+      if (!soundEnabled) return;
+
+      const notes = [300, 240, 180];
+      notes.forEach((note, i) => {
+        setTimeout(() => playBeep(note, 140, "sawtooth", 0.025), i * 120);
+      });
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      saveSound(soundEnabled);
+
+      const soundBtn = document.getElementById("soundBtn");
+      soundBtn.textContent = soundEnabled ? "🔊 Sound: ON" : "🔇 Sound: OFF";
+
+      if (soundEnabled) {
+        playBeep(520, 100, "sine", 0.03);
+      }
+    }
+
+    function createConfetti() {
+      const colors = ["#facc15", "#22c55e", "#3b82f6", "#ef4444", "#8b5cf6", "#ec4899"];
+
+      for (let i = 0; i < 70; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => {
+          piece.remove();
+        }, 4500);
+      }
     }
 
     function rollDice() {
@@ -520,6 +767,7 @@
         messageBox.className = "box message-box lose";
         rollBtn.disabled = true;
         updateUserStats();
+        startCountdown();
         return;
       }
 
@@ -527,10 +775,13 @@
 
       isRolling = true;
       rollBtn.disabled = true;
+
       resultBox.textContent = "Result: Rolling...";
-      messageBox.textContent = "🎲 Dice is rolling...";
+      messageBox.textContent = "🎲 Dice is rolling... good luck!";
       messageBox.className = "box message-box";
       diceDisplay.classList.add("rolling");
+
+      playRollSound();
 
       let count = 0;
 
@@ -539,7 +790,7 @@
         diceDisplay.textContent = diceFaces[temp];
         count++;
 
-        if (count >= 16) {
+        if (count >= 18) {
           clearInterval(rolling);
 
           const finalRoll = Math.floor(Math.random() * 6) + 1;
@@ -559,9 +810,12 @@
             player.totalWins += 1;
             messageBox.textContent = "🎉 JACKPOT! You rolled 6 and WON!";
             messageBox.className = "box message-box win";
+            playWinSound();
+            createConfetti();
           } else {
             messageBox.textContent = "😅 You rolled " + finalRoll + ". No win today. Come back tomorrow!";
             messageBox.className = "box message-box lose";
+            playLoseSound();
           }
 
           savePlayers(players);
@@ -571,28 +825,35 @@
 
           updateUserStats();
           updateLeaderboard();
+          startCountdown();
 
           isRolling = false;
         }
-      }, 120);
+      }, 110);
     }
 
     function resetAllData() {
-      const confirmReset = confirm("This will delete ALL local game data (wallet, leaderboard, scores). Continue?");
+      const confirmReset = confirm("This will delete ALL local game data (wallet, leaderboard, scores, sound). Continue?");
       if (!confirmReset) return;
 
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(CURRENT_WALLET_KEY);
+      localStorage.removeItem(SOUND_KEY);
 
       walletConnected = false;
       currentWallet = null;
       isRolling = false;
+      soundEnabled = true;
+
+      clearInterval(countdownInterval);
 
       document.getElementById("statusBanner").textContent = "🚨 CONNECT WALLET FIRST TO PLAY";
       document.getElementById("statusBanner").className = "status-banner";
 
       document.getElementById("connectBtn").textContent = "🔗 Connect Wallet";
       document.getElementById("connectBtn").disabled = false;
+
+      document.getElementById("soundBtn").textContent = "🔊 Sound: ON";
 
       document.getElementById("walletBox").textContent = "Wallet not connected";
       document.getElementById("diceDisplay").textContent = "🎲";
@@ -601,28 +862,35 @@
       document.getElementById("resultBox").textContent = "Result: -";
       document.getElementById("messageBox").textContent = "All local data reset. Connect wallet again.";
       document.getElementById("messageBox").className = "box message-box";
+      document.getElementById("countdownBox").textContent = "";
 
       updateUserStats();
       updateLeaderboard();
     }
 
-    // Auto-load leaderboard on page load
-    updateLeaderboard();
+    // Init
+    function init() {
+      soundEnabled = loadSound();
+      document.getElementById("soundBtn").textContent = soundEnabled ? "🔊 Sound: ON" : "🔇 Sound: OFF";
 
-    // Optional: auto reconnect if wallet was already saved
-    const existingWallet = getCurrentSavedWallet();
-    if (existingWallet) {
-      currentWallet = existingWallet;
-      walletConnected = true;
-      ensurePlayerExists(currentWallet);
+      updateLeaderboard();
 
-      document.getElementById("walletBox").textContent = "Connected: " + currentWallet;
-      document.getElementById("connectBtn").textContent = "✅ Wallet Connected";
-      document.getElementById("connectBtn").disabled = true;
+      const existingWallet = getCurrentSavedWallet();
+      if (existingWallet) {
+        currentWallet = existingWallet;
+        walletConnected = true;
+        ensurePlayerExists(currentWallet);
 
-      updateUserStats();
-      updateStatusAfterConnection();
+        document.getElementById("walletBox").textContent = "Connected: " + currentWallet;
+        document.getElementById("connectBtn").textContent = "✅ Wallet Connected";
+        document.getElementById("connectBtn").disabled = true;
+
+        updateUserStats();
+        updateStatusAfterConnection();
+      }
     }
+
+    init();
   </script>
 </body>
 </html>
