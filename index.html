@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARC Dice Roll Game</title>
+  <title>ARC Dice Game V3 TEST</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,7 +13,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: linear-gradient(135deg, #111827, #1f2937);
       color: white;
       min-height: 100vh;
       display: flex;
@@ -23,11 +23,10 @@
     }
 
     .game-box {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(10px);
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.12);
       border-radius: 24px;
       padding: 30px;
       text-align: center;
@@ -35,30 +34,38 @@
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 30px;
       margin-bottom: 10px;
+      color: #facc15;
     }
 
-    p {
-      color: #cbd5e1;
+    .big-warning {
+      margin-top: 10px;
       margin-bottom: 20px;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .connected {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.4);
     }
 
     button {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
       border: none;
-      outline: none;
-      padding: 14px 20px;
       border-radius: 14px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      margin: 8px 0;
-      width: 100%;
-      transition: 0.2s ease;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
     }
 
     .connect-btn {
@@ -71,22 +78,39 @@
       color: white;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .wallet-box, .result-box, .message-box {
-      margin-top: 16px;
+      margin-top: 14px;
       padding: 14px;
       border-radius: 14px;
       background: rgba(255,255,255,0.06);
-      word-break: break-word;
     }
 
     .wallet-box {
       color: #86efac;
       font-size: 14px;
+      word-break: break-word;
     }
 
     .dice {
-      font-size: 80px;
-      margin: 20px 0;
+      font-size: 100px;
+      margin: 24px 0;
+    }
+
+    .rolling {
+      animation: shake 0.15s infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(10deg) scale(1.08); }
+      50% { transform: rotate(0deg) scale(1.12); }
+      75% { transform: rotate(-10deg) scale(1.08); }
+      100% { transform: rotate(0deg) scale(1); }
     }
 
     .result-box {
@@ -107,83 +131,109 @@
     .lose {
       color: #ef4444;
     }
-
-    .small-note {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
   </style>
 </head>
 <body>
   <div class="game-box">
-    <h1>🎲 ARC Dice Game</h1>
-    <p>Connect your wallet and roll the dice. Roll a <b>6</b> to win!</p>
+    <h1>🎲 ARC Dice Game V3 TEST</h1>
 
-    <button class="connect-btn" onclick="connectWallet()">🔗 Connect Wallet</button>
+    <div class="big-warning" id="statusBanner">
+      🚨 CONNECT WALLET FIRST BEFORE YOU CAN PLAY
+    </div>
+
+    <button class="connect-btn" id="connectBtn" onclick="connectWallet()">🔗 Connect Wallet</button>
 
     <div class="wallet-box" id="walletBox">Wallet not connected</div>
 
     <div class="dice" id="diceDisplay">🎲</div>
 
-    <button class="roll-btn" onclick="rollDice()">🎲 Roll Dice</button>
+    <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Dice</button>
 
     <div class="result-box" id="resultBox">Result: -</div>
-    <div class="message-box" id="messageBox">Connect wallet first to play.</div>
-
-    <div class="small-note">
-      Demo version: simple frontend game for learning.
-    </div>
+    <div class="message-box" id="messageBox">Waiting for wallet connection...</div>
   </div>
 
   <script>
     let walletConnected = false;
-    let walletAddress = "";
+    let isRolling = false;
 
-    async function connectWallet() {
+    const diceFaces = {
+      1: "⚀",
+      2: "⚁",
+      3: "⚂",
+      4: "⚃",
+      5: "⚄",
+      6: "⚅"
+    };
+
+    function connectWallet() {
       const walletBox = document.getElementById("walletBox");
       const messageBox = document.getElementById("messageBox");
+      const connectBtn = document.getElementById("connectBtn");
+      const statusBanner = document.getElementById("statusBanner");
 
-      walletAddress = "0x" + Math.random().toString(16).substring(2, 14) + "...";
       walletConnected = true;
 
-      walletBox.textContent = "Connected: " + walletAddress;
-      messageBox.textContent = "Wallet connected! You can now roll the dice.";
+      const fakeWallet = "0x" + Math.random().toString(16).substring(2, 14) + "...";
+      walletBox.textContent = "Connected: " + fakeWallet;
+      messageBox.textContent = "✅ Wallet connected! Now you can roll.";
       messageBox.className = "message-box";
+      connectBtn.textContent = "✅ Wallet Connected";
+      connectBtn.disabled = true;
+
+      statusBanner.textContent = "✅ WALLET CONNECTED — YOU CAN NOW PLAY";
+      statusBanner.classList.add("connected");
     }
 
     function rollDice() {
-      const resultBox = document.getElementById("resultBox");
       const messageBox = document.getElementById("messageBox");
+      const resultBox = document.getElementById("resultBox");
       const diceDisplay = document.getElementById("diceDisplay");
+      const rollBtn = document.getElementById("rollBtn");
 
       if (!walletConnected) {
-        messageBox.textContent = "Please connect wallet first!";
+        messageBox.textContent = "❌ CONNECT WALLET FIRST!";
         messageBox.className = "message-box lose";
         return;
       }
 
-      const roll = Math.floor(Math.random() * 6) + 1;
+      if (isRolling) return;
 
-      const diceFaces = {
-        1: "⚀",
-        2: "⚁",
-        3: "⚂",
-        4: "⚃",
-        5: "⚄",
-        6: "⚅"
-      };
+      isRolling = true;
+      rollBtn.disabled = true;
+      resultBox.textContent = "Result: Rolling...";
+      messageBox.textContent = "🎲 Dice is rolling...";
+      messageBox.className = "message-box";
+      diceDisplay.classList.add("rolling");
 
-      diceDisplay.textContent = diceFaces[roll];
-      resultBox.textContent = "Result: " + roll;
+      let count = 0;
 
-      if (roll === 6) {
-        messageBox.textContent = "🎉 You rolled a 6! You WIN!";
-        messageBox.className = "message-box win";
-      } else {
-        messageBox.textContent = "😅 You rolled " + roll + ". Try again!";
-        messageBox.className = "message-box lose";
-      }
+      const rolling = setInterval(() => {
+        const temp = Math.floor(Math.random() * 6) + 1;
+        diceDisplay.textContent = diceFaces[temp];
+        count++;
+
+        if (count >= 15) {
+          clearInterval(rolling);
+
+          const finalRoll = Math.floor(Math.random() * 6) + 1;
+          diceDisplay.textContent = diceFaces[finalRoll];
+          diceDisplay.classList.remove("rolling");
+
+          resultBox.textContent = "Result: " + finalRoll;
+
+          if (finalRoll === 6) {
+            messageBox.textContent = "🎉 YOU WON! Rolled a 6!";
+            messageBox.className = "message-box win";
+          } else {
+            messageBox.textContent = "😅 You rolled " + finalRoll + ". Try again!";
+            messageBox.className = "message-box lose";
+          }
+
+          rollBtn.disabled = false;
+          isRolling = false;
+        }
+      }, 120);
     }
   </script>
 </body>
