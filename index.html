@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARC Dice Game V3 TEST</title>
+  <title>ARC Dice Game V2</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,59 +13,105 @@
     }
 
     body {
-      background: linear-gradient(135deg, #111827, #1f2937);
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       color: white;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
     }
 
-    .game-box {
-      width: 100%;
-      max-width: 500px;
-      background: rgba(255,255,255,0.08);
-      border: 2px solid rgba(255,255,255,0.12);
-      border-radius: 24px;
-      padding: 30px;
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .top-title {
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-
-    h1 {
-      font-size: 30px;
-      margin-bottom: 10px;
-      color: #facc15;
-    }
-
-    .big-warning {
-      margin-top: 10px;
       margin-bottom: 20px;
+    }
+
+    .top-title h1 {
+      font-size: 34px;
+      color: #facc15;
+      margin-bottom: 8px;
+    }
+
+    .top-title p {
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 900px) {
+      .layout {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .card h2 {
+      font-size: 22px;
+      margin-bottom: 12px;
+      color: #f8fafc;
+    }
+
+    .status-banner {
       padding: 14px;
       border-radius: 14px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
+      margin-bottom: 16px;
+      text-align: center;
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.4);
+      border: 1px solid rgba(239, 68, 68, 0.35);
     }
 
-    .connected {
+    .status-banner.connected {
       background: rgba(34, 197, 94, 0.15);
       color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.4);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+
+    .status-banner.locked {
+      background: rgba(250, 204, 21, 0.15);
+      color: #fde047;
+      border: 1px solid rgba(250, 204, 21, 0.35);
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      margin: 10px 0;
       border: none;
+      outline: none;
+      padding: 14px 18px;
       border-radius: 14px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      margin: 8px 0;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .connect-btn {
@@ -78,31 +124,33 @@
       color: white;
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .reset-btn {
+      background: #ef4444;
+      color: white;
+      margin-top: 14px;
     }
 
-    .wallet-box, .result-box, .message-box {
+    .box {
       margin-top: 14px;
       padding: 14px;
       border-radius: 14px;
       background: rgba(255,255,255,0.06);
+      word-break: break-word;
     }
 
     .wallet-box {
       color: #86efac;
       font-size: 14px;
-      word-break: break-word;
     }
 
     .dice {
-      font-size: 100px;
+      font-size: 110px;
       margin: 24px 0;
+      text-align: center;
     }
 
     .rolling {
-      animation: shake 0.15s infinite;
+      animation: shake 0.14s infinite;
     }
 
     @keyframes shake {
@@ -114,14 +162,16 @@
     }
 
     .result-box {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
       color: #facc15;
+      text-align: center;
     }
 
     .message-box {
       font-size: 18px;
       font-weight: bold;
+      text-align: center;
     }
 
     .win {
@@ -131,30 +181,150 @@
     .lose {
       color: #ef4444;
     }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: bold;
+      color: #f8fafc;
+    }
+
+    .leaderboard-list {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leader-item {
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+
+    .leader-rank {
+      font-weight: bold;
+      color: #facc15;
+      min-width: 40px;
+    }
+
+    .leader-wallet {
+      color: #cbd5e1;
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .leader-score {
+      color: #4ade80;
+      font-weight: bold;
+    }
+
+    .small-note {
+      margin-top: 14px;
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .empty-text {
+      color: #94a3b8;
+      font-size: 14px;
+      text-align: center;
+      padding: 12px 0;
+    }
   </style>
 </head>
 <body>
-  <div class="game-box">
-    <h1>🎲 ARC Dice Game V3 TEST</h1>
-
-    <div class="big-warning" id="statusBanner">
-      🚨 CONNECT WALLET FIRST BEFORE YOU CAN PLAY
+  <div class="container">
+    <div class="top-title">
+      <h1>🎲 ARC Dice Game V2</h1>
+      <p>Connect wallet • 1 roll per day • Roll a 6 to win • Leaderboard enabled</p>
     </div>
 
-    <button class="connect-btn" id="connectBtn" onclick="connectWallet()">🔗 Connect Wallet</button>
+    <div class="layout">
+      <!-- LEFT: GAME -->
+      <div class="card">
+        <h2>Play Game</h2>
 
-    <div class="wallet-box" id="walletBox">Wallet not connected</div>
+        <div class="status-banner" id="statusBanner">
+          🚨 CONNECT WALLET FIRST TO PLAY
+        </div>
 
-    <div class="dice" id="diceDisplay">🎲</div>
+        <button class="connect-btn" id="connectBtn" onclick="connectWallet()">🔗 Connect Wallet</button>
 
-    <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Dice</button>
+        <div class="box wallet-box" id="walletBox">Wallet not connected</div>
 
-    <div class="result-box" id="resultBox">Result: -</div>
-    <div class="message-box" id="messageBox">Waiting for wallet connection...</div>
+        <div class="dice" id="diceDisplay">🎲</div>
+
+        <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 Roll Dice</button>
+
+        <div class="box result-box" id="resultBox">Result: -</div>
+        <div class="box message-box" id="messageBox">Waiting for wallet connection...</div>
+
+        <div class="info-grid">
+          <div class="stat-box">
+            <div class="stat-label">Your Total Rolls</div>
+            <div class="stat-value" id="userRolls">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Your Total Wins</div>
+            <div class="stat-value" id="userWins">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Your Rank</div>
+            <div class="stat-value" id="userRank">-</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Can Play Today?</div>
+            <div class="stat-value" id="canPlayToday">YES</div>
+          </div>
+        </div>
+
+        <button class="reset-btn" onclick="resetAllData()">🗑 Reset All Local Game Data</button>
+
+        <div class="small-note">
+          Demo real-feel version: wallet connection is simulated, but game logic + daily lock + leaderboard are real in your browser.
+        </div>
+      </div>
+
+      <!-- RIGHT: LEADERBOARD -->
+      <div class="card">
+        <h2>🏆 Leaderboard (Top Wallets)</h2>
+        <div class="leaderboard-list" id="leaderboardList">
+          <div class="empty-text">No players yet. Connect and play first!</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
     let walletConnected = false;
+    let currentWallet = null;
     let isRolling = false;
 
     const diceFaces = {
@@ -166,23 +336,168 @@
       6: "⚅"
     };
 
+    const STORAGE_KEY = "arcDiceGamePlayersV2";
+    const CURRENT_WALLET_KEY = "arcDiceGameCurrentWalletV2";
+
+    function getTodayString() {
+      const today = new Date();
+      return today.getFullYear() + "-" +
+        String(today.getMonth() + 1).padStart(2, "0") + "-" +
+        String(today.getDate()).padStart(2, "0");
+    }
+
+    function loadPlayers() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }
+
+    function savePlayers(players) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+    }
+
+    function getCurrentSavedWallet() {
+      return localStorage.getItem(CURRENT_WALLET_KEY);
+    }
+
+    function saveCurrentWallet(wallet) {
+      localStorage.setItem(CURRENT_WALLET_KEY, wallet);
+    }
+
+    function generateFakeWallet() {
+      return "0x" + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 8);
+    }
+
+    function shortenWallet(wallet) {
+      if (!wallet) return "-";
+      return wallet.slice(0, 6) + "..." + wallet.slice(-4);
+    }
+
+    function ensurePlayerExists(wallet) {
+      const players = loadPlayers();
+
+      if (!players[wallet]) {
+        players[wallet] = {
+          wallet,
+          totalRolls: 0,
+          totalWins: 0,
+          lastPlayedDate: null,
+          lastResult: null
+        };
+        savePlayers(players);
+      }
+
+      return players[wallet];
+    }
+
+    function getSortedPlayers() {
+      const players = loadPlayers();
+      return Object.values(players).sort((a, b) => {
+        if (b.totalWins !== a.totalWins) return b.totalWins - a.totalWins;
+        return b.totalRolls - a.totalRolls;
+      });
+    }
+
+    function getRank(wallet) {
+      const sorted = getSortedPlayers();
+      const index = sorted.findIndex(p => p.wallet === wallet);
+      return index === -1 ? "-" : index + 1;
+    }
+
+    function canWalletPlayToday(wallet) {
+      const players = loadPlayers();
+      const player = players[wallet];
+      if (!player) return true;
+      return player.lastPlayedDate !== getTodayString();
+    }
+
+    function updateLeaderboard() {
+      const leaderboardList = document.getElementById("leaderboardList");
+      const sorted = getSortedPlayers();
+
+      if (sorted.length === 0) {
+        leaderboardList.innerHTML = '<div class="empty-text">No players yet. Connect and play first!</div>';
+        return;
+      }
+
+      const topPlayers = sorted.slice(0, 10);
+
+      leaderboardList.innerHTML = topPlayers.map((player, index) => `
+        <div class="leader-item">
+          <div class="leader-rank">#${index + 1}</div>
+          <div class="leader-wallet">${shortenWallet(player.wallet)}</div>
+          <div class="leader-score">Wins: ${player.totalWins} | Rolls: ${player.totalRolls}</div>
+        </div>
+      `).join("");
+    }
+
+    function updateUserStats() {
+      const userRolls = document.getElementById("userRolls");
+      const userWins = document.getElementById("userWins");
+      const userRank = document.getElementById("userRank");
+      const canPlayTodayEl = document.getElementById("canPlayToday");
+
+      if (!currentWallet) {
+        userRolls.textContent = "0";
+        userWins.textContent = "0";
+        userRank.textContent = "-";
+        canPlayTodayEl.textContent = "YES";
+        return;
+      }
+
+      const players = loadPlayers();
+      const player = players[currentWallet];
+
+      userRolls.textContent = player.totalRolls;
+      userWins.textContent = player.totalWins;
+      userRank.textContent = "#" + getRank(currentWallet);
+      canPlayTodayEl.textContent = canWalletPlayToday(currentWallet) ? "YES" : "NO";
+    }
+
+    function updateStatusAfterConnection() {
+      const statusBanner = document.getElementById("statusBanner");
+      const messageBox = document.getElementById("messageBox");
+      const rollBtn = document.getElementById("rollBtn");
+
+      if (!currentWallet) return;
+
+      if (canWalletPlayToday(currentWallet)) {
+        statusBanner.textContent = "✅ WALLET CONNECTED — YOU CAN PLAY TODAY";
+        statusBanner.className = "status-banner connected";
+        messageBox.textContent = "🎲 You have 1 roll available today. Good luck!";
+        messageBox.className = "box message-box";
+        rollBtn.disabled = false;
+      } else {
+        statusBanner.textContent = "⏳ YOU ALREADY PLAYED TODAY — COME BACK TOMORROW";
+        statusBanner.className = "status-banner locked";
+        messageBox.textContent = "🚫 Daily limit reached for this wallet. Try again tomorrow.";
+        messageBox.className = "box message-box lose";
+        rollBtn.disabled = true;
+      }
+    }
+
     function connectWallet() {
       const walletBox = document.getElementById("walletBox");
-      const messageBox = document.getElementById("messageBox");
       const connectBtn = document.getElementById("connectBtn");
-      const statusBanner = document.getElementById("statusBanner");
 
+      // Reuse same wallet if already saved, so stats stay tied to one wallet
+      let savedWallet = getCurrentSavedWallet();
+      if (!savedWallet) {
+        savedWallet = generateFakeWallet();
+        saveCurrentWallet(savedWallet);
+      }
+
+      currentWallet = savedWallet;
       walletConnected = true;
 
-      const fakeWallet = "0x" + Math.random().toString(16).substring(2, 14) + "...";
-      walletBox.textContent = "Connected: " + fakeWallet;
-      messageBox.textContent = "✅ Wallet connected! Now you can roll.";
-      messageBox.className = "message-box";
+      ensurePlayerExists(currentWallet);
+
+      walletBox.textContent = "Connected: " + currentWallet;
       connectBtn.textContent = "✅ Wallet Connected";
       connectBtn.disabled = true;
 
-      statusBanner.textContent = "✅ WALLET CONNECTED — YOU CAN NOW PLAY";
-      statusBanner.classList.add("connected");
+      updateUserStats();
+      updateLeaderboard();
+      updateStatusAfterConnection();
     }
 
     function rollDice() {
@@ -190,10 +505,21 @@
       const resultBox = document.getElementById("resultBox");
       const diceDisplay = document.getElementById("diceDisplay");
       const rollBtn = document.getElementById("rollBtn");
+      const statusBanner = document.getElementById("statusBanner");
 
-      if (!walletConnected) {
+      if (!walletConnected || !currentWallet) {
         messageBox.textContent = "❌ CONNECT WALLET FIRST!";
-        messageBox.className = "message-box lose";
+        messageBox.className = "box message-box lose";
+        return;
+      }
+
+      if (!canWalletPlayToday(currentWallet)) {
+        statusBanner.textContent = "⏳ YOU ALREADY PLAYED TODAY — COME BACK TOMORROW";
+        statusBanner.className = "status-banner locked";
+        messageBox.textContent = "🚫 This wallet already used its daily roll.";
+        messageBox.className = "box message-box lose";
+        rollBtn.disabled = true;
+        updateUserStats();
         return;
       }
 
@@ -203,7 +529,7 @@
       rollBtn.disabled = true;
       resultBox.textContent = "Result: Rolling...";
       messageBox.textContent = "🎲 Dice is rolling...";
-      messageBox.className = "message-box";
+      messageBox.className = "box message-box";
       diceDisplay.classList.add("rolling");
 
       let count = 0;
@@ -213,27 +539,89 @@
         diceDisplay.textContent = diceFaces[temp];
         count++;
 
-        if (count >= 15) {
+        if (count >= 16) {
           clearInterval(rolling);
 
           const finalRoll = Math.floor(Math.random() * 6) + 1;
           diceDisplay.textContent = diceFaces[finalRoll];
           diceDisplay.classList.remove("rolling");
 
+          const players = loadPlayers();
+          const player = players[currentWallet];
+
+          player.totalRolls += 1;
+          player.lastPlayedDate = getTodayString();
+          player.lastResult = finalRoll;
+
           resultBox.textContent = "Result: " + finalRoll;
 
           if (finalRoll === 6) {
-            messageBox.textContent = "🎉 YOU WON! Rolled a 6!";
-            messageBox.className = "message-box win";
+            player.totalWins += 1;
+            messageBox.textContent = "🎉 JACKPOT! You rolled 6 and WON!";
+            messageBox.className = "box message-box win";
           } else {
-            messageBox.textContent = "😅 You rolled " + finalRoll + ". Try again!";
-            messageBox.className = "message-box lose";
+            messageBox.textContent = "😅 You rolled " + finalRoll + ". No win today. Come back tomorrow!";
+            messageBox.className = "box message-box lose";
           }
 
-          rollBtn.disabled = false;
+          savePlayers(players);
+
+          statusBanner.textContent = "⏳ DAILY ROLL USED — COME BACK TOMORROW";
+          statusBanner.className = "status-banner locked";
+
+          updateUserStats();
+          updateLeaderboard();
+
           isRolling = false;
         }
       }, 120);
+    }
+
+    function resetAllData() {
+      const confirmReset = confirm("This will delete ALL local game data (wallet, leaderboard, scores). Continue?");
+      if (!confirmReset) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(CURRENT_WALLET_KEY);
+
+      walletConnected = false;
+      currentWallet = null;
+      isRolling = false;
+
+      document.getElementById("statusBanner").textContent = "🚨 CONNECT WALLET FIRST TO PLAY";
+      document.getElementById("statusBanner").className = "status-banner";
+
+      document.getElementById("connectBtn").textContent = "🔗 Connect Wallet";
+      document.getElementById("connectBtn").disabled = false;
+
+      document.getElementById("walletBox").textContent = "Wallet not connected";
+      document.getElementById("diceDisplay").textContent = "🎲";
+      document.getElementById("diceDisplay").classList.remove("rolling");
+      document.getElementById("rollBtn").disabled = false;
+      document.getElementById("resultBox").textContent = "Result: -";
+      document.getElementById("messageBox").textContent = "All local data reset. Connect wallet again.";
+      document.getElementById("messageBox").className = "box message-box";
+
+      updateUserStats();
+      updateLeaderboard();
+    }
+
+    // Auto-load leaderboard on page load
+    updateLeaderboard();
+
+    // Optional: auto reconnect if wallet was already saved
+    const existingWallet = getCurrentSavedWallet();
+    if (existingWallet) {
+      currentWallet = existingWallet;
+      walletConnected = true;
+      ensurePlayerExists(currentWallet);
+
+      document.getElementById("walletBox").textContent = "Connected: " + currentWallet;
+      document.getElementById("connectBtn").textContent = "✅ Wallet Connected";
+      document.getElementById("connectBtn").disabled = true;
+
+      updateUserStats();
+      updateStatusAfterConnection();
     }
   </script>
 </body>
