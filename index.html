@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARC Dice Roll Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .game-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      width: 100%;
+      max-width: 450px;
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #cbd5e1;
+      margin-bottom: 20px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 8px 0;
+      width: 100%;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .connect-btn {
+      background: #22c55e;
+      color: white;
+    }
+
+    .roll-btn {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .wallet-box, .result-box, .message-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      word-break: break-word;
+    }
+
+    .wallet-box {
+      color: #86efac;
+      font-size: 14px;
+    }
+
+    .dice {
+      font-size: 80px;
+      margin: 20px 0;
+    }
+
+    .result-box {
+      font-size: 22px;
+      font-weight: bold;
+      color: #facc15;
+    }
+
+    .message-box {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .win {
+      color: #22c55e;
+    }
+
+    .lose {
+      color: #ef4444;
+    }
+
+    .small-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-box">
+    <h1>🎲 ARC Dice Game</h1>
+    <p>Connect your wallet and roll the dice. Roll a <b>6</b> to win!</p>
+
+    <button class="connect-btn" onclick="connectWallet()">🔗 Connect Wallet</button>
+
+    <div class="wallet-box" id="walletBox">Wallet not connected</div>
+
+    <div class="dice" id="diceDisplay">🎲</div>
+
+    <button class="roll-btn" onclick="rollDice()">🎲 Roll Dice</button>
+
+    <div class="result-box" id="resultBox">Result: -</div>
+    <div class="message-box" id="messageBox">Connect wallet first to play.</div>
+
+    <div class="small-note">
+      Demo version: simple frontend game for learning.
+    </div>
+  </div>
+
+  <script>
+    let walletConnected = false;
+    let walletAddress = "";
+
+    async function connectWallet() {
+      const walletBox = document.getElementById("walletBox");
+      const messageBox = document.getElementById("messageBox");
+
+      walletAddress = "0x" + Math.random().toString(16).substring(2, 14) + "...";
+      walletConnected = true;
+
+      walletBox.textContent = "Connected: " + walletAddress;
+      messageBox.textContent = "Wallet connected! You can now roll the dice.";
+      messageBox.className = "message-box";
+    }
+
+    function rollDice() {
+      const resultBox = document.getElementById("resultBox");
+      const messageBox = document.getElementById("messageBox");
+      const diceDisplay = document.getElementById("diceDisplay");
+
+      if (!walletConnected) {
+        messageBox.textContent = "Please connect wallet first!";
+        messageBox.className = "message-box lose";
+        return;
+      }
+
+      const roll = Math.floor(Math.random() * 6) + 1;
+
+      const diceFaces = {
+        1: "⚀",
+        2: "⚁",
+        3: "⚂",
+        4: "⚃",
+        5: "⚄",
+        6: "⚅"
+      };
+
+      diceDisplay.textContent = diceFaces[roll];
+      resultBox.textContent = "Result: " + roll;
+
+      if (roll === 6) {
+        messageBox.textContent = "🎉 You rolled a 6! You WIN!";
+        messageBox.className = "message-box win";
+      } else {
+        messageBox.textContent = "😅 You rolled " + roll + ". Try again!";
+        messageBox.className = "message-box lose";
+      }
+    }
+  </script>
+</body>
+</html>
